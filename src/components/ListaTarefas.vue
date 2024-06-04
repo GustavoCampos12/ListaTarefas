@@ -8,13 +8,13 @@
         <p>
           <textarea placeholder="Tarefa" name="message" class="form-control" v-model="message"></textarea>
         </p>
-        <button v-on:click="addTarefa" type="submit" class="btn btn-primary">Adicionar</button>
+        <button @click="addTarefa" type="submit" class="btn btn-primary">Adicionar</button>
         <div class="list-group">
           <div class="list-group-item" v-for="(tarefa, index) in todasTarefas" :key="index">
             <span class="comment_author">Nome: <strong>{{ tarefa.name }}</strong></span>
             <p>Tarefa: {{ tarefa.message }}</p>
             <div>
-              <a v-on:click.prevent="removeTarefa(index)" href="#" title="Excluir">Excluir</a>
+              <a @click.prevent="removeTarefa(index)" href="#" title="Excluir">Excluir</a>
             </div>
           </div>
         </div>
@@ -22,40 +22,34 @@
     </div>
   </template>
   
-  <script>
-  export default {
-    name: 'ListaTarefas',
-    data() {
-      return {
-        tarefas: [],
-        name: '',
-        message: ''
-      };
-    },
-    methods: {
-      addTarefa() {
-        if (this.message.trim() === '') {
-          return;
-        }
-        this.tarefas.push({
-          name: this.name,
-          message: this.message
-        });
-        this.name = '';
-        this.message = '';
-      },
-      removeTarefa(index) {
-        this.tarefas.splice(index, 1);
+  <script setup>
+    import {ref, computed} from 'vue';
+
+    const tarefas = ref([]);
+    const name = ref('');
+    const message = ref('');
+
+    const addTarefa = () =>{
+      if(message.value.trim() ===''){
+        return;
       }
-    },
-    computed: {
-      todasTarefas() {
-        return this.tarefas.map(tarefa => ({
-          ...tarefa,
-          name: tarefa.name.trim() === '' ? 'Anônimo' : tarefa.name
-        }));
-      }
-    },
-  };
+      tarefas.value.push({
+        name: name.value,
+        message: message.value
+      });
+      name.value = '';
+      message.value = '';
+    }
+
+    const removeTarefa = (index) =>{
+      tarefas.value.splice(index, 1);
+    }
+
+    const todasTarefas = computed(() =>{
+      return tarefas.value.map(tarefa =>({
+        ...tarefa,
+        name: tarefa.name.trim() === ''? 'Anônimo' : tarefa.name
+      }));
+    })
   </script>
   
